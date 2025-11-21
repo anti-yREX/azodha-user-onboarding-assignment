@@ -1,34 +1,83 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from '@/components/routes/ProtectedRoute';
+import StepGuard from '@/components/routes/StepGuard';
+import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import OnBoardingLayout from '@/pages/Onboarding/OnboardingLayout';
+import Profile from '@/pages/Onboarding/Profile';
+import FavoriteSongs from '@/pages/Onboarding/FavoriteSongs';
+import PaymentInfo from '@/pages/Onboarding/PaymentInfo';
+import Success from '@/pages/Onboarding/Success';
+import { getFirstStepPath } from '@/config/routes';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-8">
-      <div className="max-w-2xl w-full space-y-8 text-center">
-        <div className="space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Azodha User Onboarding
-          </h1>
-          <p className="text-muted-foreground">
-            Tailwind CSS + Shadcn/ui setup complete
-          </p>
-        </div>
-        
-        <div className="card bg-card text-card-foreground p-6 rounded-lg border shadow-sm">
-          <button 
-            onClick={() => setCount((count) => count + 1)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Count is {count}
-          </button>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Edit <code className="px-1 py-0.5 bg-muted rounded text-xs">src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-      </div>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        {/* Home page - protected route */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Onboarding flow with nested routes */}
+        <Route path="/onboarding" element={<OnBoardingLayout />}>
+          {/* Redirect to first step when accessing /onboarding */}
+          <Route
+            index
+            element={<Navigate to={`/onboarding/${getFirstStepPath()}`} replace />}
+          />
+
+          {/* Profile step */}
+          <Route
+            path="profile"
+            element={
+              <StepGuard stepPath="profile">
+                <Profile />
+              </StepGuard>
+            }
+          />
+
+          {/* Favorite Songs step */}
+          <Route
+            path="favorite-songs"
+            element={
+              <StepGuard stepPath="favorite-songs">
+                <FavoriteSongs />
+              </StepGuard>
+            }
+          />
+
+          {/* Payment Info step */}
+          <Route
+            path="payment-info"
+            element={
+              <StepGuard stepPath="payment-info">
+                <PaymentInfo />
+              </StepGuard>
+            }
+          />
+
+          {/* Success step */}
+          <Route
+            path="success"
+            element={
+              <StepGuard stepPath="success">
+                <Success />
+              </StepGuard>
+            }
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
