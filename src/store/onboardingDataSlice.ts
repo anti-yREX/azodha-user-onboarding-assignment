@@ -1,5 +1,16 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+export interface FavoriteSong {
+  id: string;
+  songName: string;
+  artist: string;
+}
+
+interface FavoriteSongsData {
+  songs: FavoriteSong[];
+  isDone: boolean;
+}
+
 interface ProfileData {
   name: string;
   age: number | null;
@@ -11,7 +22,7 @@ interface ProfileData {
 interface OnboardingDataState {
   isDone: boolean;
   profile: ProfileData;
-  favoriteSongs: unknown[];
+  favoriteSongs: FavoriteSongsData;
   paymentInfo: Record<string, unknown>;
 }
 
@@ -24,7 +35,10 @@ const initialState: OnboardingDataState = {
     profilePic: null,
     isDone: false,
   },
-  favoriteSongs: [],
+  favoriteSongs: {
+    songs: [],
+    isDone: false,
+  },
   paymentInfo: {},
 };
 
@@ -41,8 +55,11 @@ const onboardingDataSlice = createSlice({
     setProfileDone: (state, action: PayloadAction<boolean>) => {
       state.profile.isDone = action.payload;
     },
-    updateFavoriteSongs: (state, action: PayloadAction<unknown[]>) => {
-      state.favoriteSongs = action.payload;
+    updateFavoriteSongs: (state, action: PayloadAction<FavoriteSong[]>) => {
+      state.favoriteSongs.songs = action.payload;
+    },
+    setFavoriteSongsDone: (state, action: PayloadAction<boolean>) => {
+      state.favoriteSongs.isDone = action.payload;
     },
     updatePaymentInfo: (state, action: PayloadAction<Record<string, unknown>>) => {
       state.paymentInfo = action.payload;
@@ -55,6 +72,7 @@ export const {
   updateProfile,
   setProfileDone,
   updateFavoriteSongs,
+  setFavoriteSongsDone,
   updatePaymentInfo,
 } = onboardingDataSlice.actions;
 export default onboardingDataSlice.reducer;
@@ -67,7 +85,9 @@ export const selectProfile = (state: { onboardingData: OnboardingDataState }) =>
 export const selectProfileIsDone = (state: { onboardingData: OnboardingDataState }) =>
   state.onboardingData.profile.isDone;
 export const selectFavoriteSongs = (state: { onboardingData: OnboardingDataState }) =>
-  state.onboardingData.favoriteSongs;
+  state.onboardingData.favoriteSongs.songs;
+export const selectFavoriteSongsIsDone = (state: { onboardingData: OnboardingDataState }) =>
+  state.onboardingData.favoriteSongs.isDone;
 export const selectPaymentInfo = (state: { onboardingData: OnboardingDataState }) =>
   state.onboardingData.paymentInfo;
 

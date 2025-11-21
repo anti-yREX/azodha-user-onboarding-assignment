@@ -55,7 +55,10 @@ export const store = configureStore({
         profilePic: null,
         isDone: false,
       },
-      favoriteSongs: [],
+      favoriteSongs: {
+        songs: [],
+        isDone: false,
+      },
       paymentInfo: {},
     },
   },
