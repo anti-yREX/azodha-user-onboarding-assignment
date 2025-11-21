@@ -15,7 +15,6 @@ function Stepper({ currentStepIndex }: StepperProps) {
         {ONBOARDING_STEPS.map((step, index) => {
           const isCompleted = index < currentStepIndex;
           const isCurrent = index === currentStepIndex;
-          const isUpcoming = index > currentStepIndex;
 
           return (
             <div key={step.path} className="flex items-center flex-1">
