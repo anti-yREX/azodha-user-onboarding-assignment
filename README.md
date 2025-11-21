@@ -26,3 +26,30 @@ Azodha asked for a React + TypeScript + Redux implementation of a multi-step use
 - Organize the project cleanly with best practices for React, TypeScript, and Redux.
 - Provide the finished solution via a GitHub repository.
 - Keep this README updated with implementation notes or setup instructions as the project evolves.
+
+## Current Stack Baseline
+
+- React 19 + TypeScript on top of Vite 7.
+- Yarn Classic (1.x) for dependency management.
+- ESLint 9 with the default Vite React recommendations.
+- Absolute import alias `@/*` mapped to `src/*` for cleaner module paths.
+
+## Project Structure
+
+```
+src/
+  components/   # shared visual building blocks
+  pages/        # top-level route views
+  types/        # shared domain types & interfaces
+```
+
+Additional folders (Redux store, utilities, etc.) will be added as the onboarding flow is implemented.
+
+## Getting Started
+
+```bash
+yarn install
+yarn dev
+```
+
+The dev server runs on Vite’s default port (`http://localhost:5173`). Use `yarn build` for a production bundle and `yarn preview` to serve that build locally.
