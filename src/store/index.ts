@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
+import userOnboardingReducer from './userOnboardingSlice';
 
 const AUTH_STORAGE_KEY = 'authState';
 
@@ -24,11 +25,15 @@ const loadAuthState = (): AuthState | undefined => {
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    userOnboarding: userOnboardingReducer,
   },
   preloadedState: {
     auth: loadAuthState() || {
       isAuthenticated: false,
       username: null,
+    },
+    userOnboarding: {
+      isDone: false,
     },
   },
 });

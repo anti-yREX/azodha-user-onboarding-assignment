@@ -24,11 +24,15 @@ function App() {
           }
         />
 
-        {/* Login page */}
-        <Route path="/login" element={<Login />} />
-
         {/* Onboarding flow with nested routes */}
-        <Route path="/onboarding" element={<OnboardingLayout />}>
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <OnboardingLayout />
+            </ProtectedRoute>
+          }
+        >
           {/* Redirect to first step when accessing /onboarding */}
           <Route
             index
@@ -74,7 +78,11 @@ function App() {
               </StepGuard>
             }
           />
+          <Route path="*" element={<Navigate to={`/onboarding/${getFirstStepPath()}`} replace />} />
         </Route>
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
