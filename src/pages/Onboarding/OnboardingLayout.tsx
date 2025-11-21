@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Stepper from '@/components/OnBoarding/Stepper';
+import Stepper from '@/components/Onboarding/Stepper';
 import { getStepIndex, getFirstStepPath } from '@/config/routes';
 
 /**
