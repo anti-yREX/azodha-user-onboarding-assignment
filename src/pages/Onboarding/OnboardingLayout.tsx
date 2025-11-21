@@ -7,7 +7,7 @@ import { getStepIndex, getFirstStepPath } from '@/config/routes';
  * Contains Stepper and renders child routes via Outlet
  * TODO: Integrate with Redux to get current step dynamically
  */
-function OnBoardingLayout() {
+function OnboardingLayout() {
   const location = useLocation();
   
   // Extract step path from location (e.g., '/onboarding/profile' -> 'profile')
@@ -27,5 +27,5 @@ function OnBoardingLayout() {
   );
 }
 
-export default OnBoardingLayout;
+export default OnboardingLayout;
 

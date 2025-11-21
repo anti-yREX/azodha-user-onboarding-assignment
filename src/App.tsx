@@ -3,7 +3,7 @@ import ProtectedRoute from '@/components/routes/ProtectedRoute';
 import StepGuard from '@/components/routes/StepGuard';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
-import OnBoardingLayout from '@/pages/Onboarding/OnboardingLayout';
+import OnboardingLayout from '@/pages/Onboarding/OnboardingLayout';
 import Profile from '@/pages/Onboarding/Profile';
 import FavoriteSongs from '@/pages/Onboarding/FavoriteSongs';
 import PaymentInfo from '@/pages/Onboarding/PaymentInfo';
@@ -28,7 +28,7 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         {/* Onboarding flow with nested routes */}
-        <Route path="/onboarding" element={<OnBoardingLayout />}>
+        <Route path="/onboarding" element={<OnboardingLayout />}>
           {/* Redirect to first step when accessing /onboarding */}
           <Route
             index
