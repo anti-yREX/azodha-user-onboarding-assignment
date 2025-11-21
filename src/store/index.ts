@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
-import userOnboardingReducer from './userOnboardingSlice';
+import onboardingDataReducer from './onboardingDataSlice';
 
 const AUTH_STORAGE_KEY = 'authState';
+const ONBOARDING_DATA_STORAGE_KEY = 'onboardingDataState';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -22,31 +23,58 @@ const loadAuthState = (): AuthState | undefined => {
   }
 };
 
+// Load onboarding data from localStorage
+const loadOnboardingData = () => {
+  try {
+    const serializedState = localStorage.getItem(ONBOARDING_DATA_STORAGE_KEY);
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return undefined;
+  }
+};
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    userOnboarding: userOnboardingReducer,
+    onboardingData: onboardingDataReducer,
   },
   preloadedState: {
     auth: loadAuthState() || {
       isAuthenticated: false,
       username: null,
     },
-    userOnboarding: {
+    onboardingData: loadOnboardingData() || {
       isDone: false,
+      profile: {
+        name: '',
+        age: null,
+        email: '',
+        profilePic: null,
+        isDone: false,
+      },
+      favoriteSongs: [],
+      paymentInfo: {},
     },
   },
 });
 
-// Save state to localStorage whenever auth state changes
+// Save state to localStorage whenever state changes
 store.subscribe(() => {
   try {
     const state = store.getState();
+    
+    // Save auth state
     const authState: AuthState = {
       isAuthenticated: state.auth.isAuthenticated,
       username: state.auth.username,
     };
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
+    
+    // Save onboarding data
+    localStorage.setItem(ONBOARDING_DATA_STORAGE_KEY, JSON.stringify(state.onboardingData));
   } catch (err) {
     // Ignore write errors
   }
