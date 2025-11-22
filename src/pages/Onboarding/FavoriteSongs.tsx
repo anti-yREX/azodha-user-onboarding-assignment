@@ -67,13 +67,10 @@ function FavoriteSongs() {
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ values, errors, touched, isSubmitting, setFieldValue }: FormikProps<FavoriteSongsFormValues>) => (
+        {({ values, errors, touched, isSubmitting, setFieldValue, submitForm }: FormikProps<FavoriteSongsFormValues>) => (
           <form onSubmit={(e) => {
             e.preventDefault();
-            const formErrors = validateForm(values);
-            if (Object.keys(formErrors).length === 0) {
-              handleSubmit(values, { setSubmitting: () => {} } as FormikHelpers<FavoriteSongsFormValues>);
-            }
+            submitForm();
           }} className="space-y-6">
             <div className="p-6 border border-border rounded-lg bg-card space-y-4">
               <FieldArray name="songs">
@@ -108,10 +105,12 @@ function FavoriteSongs() {
                                   dispatch(updateFavoriteSongs(updatedSongs));
                                 }}
                               />
-                              {touched.songs?.[index]?.songName && errors.songs?.[index]?.songName && (
+                              {touched.songs?.[index]?.songName && errors.songs?.[index] && (
                                 <p className="text-sm text-destructive">
-                                  {typeof errors.songs[index] === 'object' && errors.songs[index]?.songName
-                                    ? errors.songs[index].songName
+                                  {typeof errors.songs[index] === 'object' && errors.songs[index] !== null && 'songName' in errors.songs[index]
+                                    ? (errors.songs[index] as { songName?: string }).songName
+                                    : typeof errors.songs[index] === 'string'
+                                    ? errors.songs[index]
                                     : ''}
                                 </p>
                               )}
@@ -139,10 +138,12 @@ function FavoriteSongs() {
                                   dispatch(updateFavoriteSongs(updatedSongs));
                                 }}
                               />
-                              {touched.songs?.[index]?.artist && errors.songs?.[index]?.artist && (
+                              {touched.songs?.[index]?.artist && errors.songs?.[index] && (
                                 <p className="text-sm text-destructive">
-                                  {typeof errors.songs[index] === 'object' && errors.songs[index]?.artist
-                                    ? errors.songs[index].artist
+                                  {typeof errors.songs[index] === 'object' && errors.songs[index] !== null && 'artist' in errors.songs[index]
+                                    ? (errors.songs[index] as { artist?: string }).artist
+                                    : typeof errors.songs[index] === 'string'
+                                    ? errors.songs[index]
                                     : ''}
                                 </p>
                               )}
@@ -158,7 +159,7 @@ function FavoriteSongs() {
                                 const updatedSongs = values.songs.filter((_, i) => i !== index);
                                 dispatch(updateFavoriteSongs(updatedSongs));
                               }}
-                              className="px-3 py-2 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                              className="px-3 py-2 bg-destructive text-destructive-foreground rounded-md font-medium hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors border-4 shadow-sm"
                             >
                               Remove
                             </button>
@@ -173,7 +174,7 @@ function FavoriteSongs() {
                       onClick={() => {
                         push({ id: Date.now().toString(), songName: '', artist: '' });
                       }}
-                      className="w-full px-4 py-2 border border-dashed border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                      className="w-full px-4 py-2 bg-secondary text-secondary-foreground rounded-md font-medium hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors border-4"
                     >
                       + Add Another Song
                     </button>
@@ -191,7 +192,7 @@ function FavoriteSongs() {
               <button
                 type="submit"
                 disabled={isSubmitting || values.songs.length === 0}
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:shadow-md active:scale-[0.98]"
+                className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:shadow-md active:scale-[0.98] border-4 border-white"
               >
                 Next
               </button>

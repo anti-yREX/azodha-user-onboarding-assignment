@@ -56,7 +56,7 @@ function Success() {
         <div className="flex justify-center">
           <button
             onClick={handleGetStarted}
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-md font-medium shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 transform hover:shadow-md active:scale-[0.98]"
+            className="px-8 py-3 bg-primary text-primary-foreground rounded-md font-medium shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 transform hover:shadow-md active:scale-[0.98] border-4 border-white"
           >
             Get Started
           </button>
