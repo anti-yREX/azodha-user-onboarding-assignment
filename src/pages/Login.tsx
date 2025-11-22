@@ -3,7 +3,6 @@ import { Formik, Field, type FormikHelpers, type FormikProps } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { login, selectIsAuthenticated, VALID_CREDENTIALS } from '@/store/authSlice';
-import { getFirstStepPath } from '@/config/routes';
 import { selectIsUserOnboardingDone } from '@/store/onboardingDataSlice';
 
 interface LoginFormValues {
@@ -74,8 +73,10 @@ function Login() {
           validate={validateForm}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, isSubmitting, submitForm }: FormikProps<LoginFormValues>) => {
-            const hasError = errors.password && touched.password;
+          {({ errors, touched, isSubmitting, submitCount, submitForm }: FormikProps<LoginFormValues>) => {
+            const hasError = errors.password && (touched.password || submitCount > 0);
+            const showUsernameError = (touched.username && errors.username) || (submitCount > 0 && errors.username);
+            const showPasswordError = (touched.password && errors.password) || (submitCount > 0 && errors.password);
 
             return (
               <form
@@ -99,11 +100,13 @@ function Login() {
                     id="username"
                     name="username"
                     type="text"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showUsernameError ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="Enter username"
                     disabled={isSubmitting}
                   />
-                  {touched.username && errors.username && (
+                  {showUsernameError && (
                     <p className="text-sm text-destructive">{errors.username}</p>
                   )}
                 </div>
@@ -116,11 +119,13 @@ function Login() {
                     id="password"
                     name="password"
                     type="password"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showPasswordError && typeof errors.password === 'string' && !errors.password.includes('Invalid') ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="Enter password"
                     disabled={isSubmitting}
                   />
-                  {touched.password && errors.password && typeof errors.password === 'string' && !errors.password.includes('Invalid') && (
+                  {showPasswordError && typeof errors.password === 'string' && !errors.password.includes('Invalid') && (
                     <p className="text-sm text-destructive">{errors.password}</p>
                   )}
                 </div>

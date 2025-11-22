@@ -102,16 +102,16 @@ function Profile() {
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ values, errors, touched, isSubmitting, setFieldValue, handleBlur, submitForm }: FormikProps<ProfileFormValues>) => {
+        {({ values, errors, touched, isSubmitting, submitCount, setFieldValue, handleBlur, submitForm }: FormikProps<ProfileFormValues>) => {
           const isFormValid = values.name.trim() && values.age && values.email.trim();
+          const showNameError = (touched.name && errors.name) || (submitCount > 0 && errors.name);
+          const showAgeError = (touched.age && errors.age) || (submitCount > 0 && errors.age);
+          const showEmailError = (touched.email && errors.email) || (submitCount > 0 && errors.email);
 
           return (
             <form onSubmit={(e) => {
               e.preventDefault();
-              const formErrors = validateForm(values);
-              if (Object.keys(formErrors).length === 0) {
-                submitForm();
-              }
+              submitForm();
             }} className="space-y-6">
               <div className="p-6 border border-border rounded-lg bg-card space-y-4">
                 {/* Name Field */}
@@ -123,7 +123,9 @@ function Profile() {
                     id="name"
                     name="name"
                     type="text"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showNameError ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="Enter your name"
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       handleBlur(e);
@@ -131,7 +133,7 @@ function Profile() {
                       dispatch(updateProfile({ name: e.target.value }));
                     }}
                   />
-                  {touched.name && errors.name && (
+                  {showNameError && (
                     <p className="text-sm text-destructive">{errors.name}</p>
                   )}
                 </div>
@@ -147,7 +149,9 @@ function Profile() {
                     type="number"
                     min="1"
                     max="150"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showAgeError ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="Enter your age"
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       handleBlur(e);
@@ -156,7 +160,7 @@ function Profile() {
                       dispatch(updateProfile({ age: ageNum }));
                     }}
                   />
-                  {touched.age && errors.age && (
+                  {showAgeError && (
                     <p className="text-sm text-destructive">{errors.age}</p>
                   )}
                 </div>
@@ -170,7 +174,9 @@ function Profile() {
                     id="email"
                     name="email"
                     type="email"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showEmailError ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="Enter your email"
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       handleBlur(e);
@@ -178,7 +184,7 @@ function Profile() {
                       dispatch(updateProfile({ email: e.target.value }));
                     }}
                   />
-                  {touched.email && errors.email && (
+                  {showEmailError && (
                     <p className="text-sm text-destructive">{errors.email}</p>
                   )}
                 </div>

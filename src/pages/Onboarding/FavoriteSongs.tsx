@@ -1,4 +1,4 @@
-import { Formik, Field, FieldArray, type FormikHelpers, type FormikProps } from 'formik';
+import { Formik, Field, FieldArray, getIn, type FormikHelpers, type FormikProps } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -71,7 +71,7 @@ function FavoriteSongs() {
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ values, errors, touched, isSubmitting, setFieldValue, submitForm }: FormikProps<FavoriteSongsFormValues>) => (
+        {({ values, errors, touched, isSubmitting, submitCount, setFieldValue, submitForm }: FormikProps<FavoriteSongsFormValues>) => (
           <form onSubmit={(e) => {
             e.preventDefault();
             submitForm();
@@ -80,79 +80,82 @@ function FavoriteSongs() {
               <FieldArray name="songs">
                 {({ push, remove }) => (
                   <div className="space-y-4">
-                    {values.songs.map((song, index) => (
-                      <div
-                        key={song.id}
-                        className="p-4 border border-border rounded-md bg-background space-y-4"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 space-y-4">
-                            {/* Song Name Field */}
-                            <div className="space-y-2">
-                              <label
-                                htmlFor={`songs.${index}.songName`}
-                                className="block text-sm font-medium"
-                              >
-                                Song Name <span className="text-destructive">*</span>
-                              </label>
-                              <Field
-                                id={`songs.${index}.songName`}
-                                name={`songs.${index}.songName`}
-                                type="text"
-                                className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                placeholder="Enter song name"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                  setFieldValue(`songs.${index}.songName`, e.target.value);
-                                  // Auto-save to Redux
-                                  const updatedSongs = [...values.songs];
-                                  updatedSongs[index] = { ...updatedSongs[index], songName: e.target.value };
-                                  dispatch(updateFavoriteSongs(updatedSongs));
-                                }}
-                              />
-                              {touched.songs?.[index]?.songName && errors.songs?.[index] && (
-                                <p className="text-sm text-destructive">
-                                  {typeof errors.songs[index] === 'object' && errors.songs[index] !== null && 'songName' in errors.songs[index]
-                                    ? (errors.songs[index] as { songName?: string }).songName
-                                    : typeof errors.songs[index] === 'string'
-                                    ? errors.songs[index]
-                                    : ''}
-                                </p>
-                              )}
-                            </div>
+                    {values.songs.map((song, index) => {
+                      const songNameError = getIn(errors, `songs.${index}.songName`) as string | undefined;
+                      const artistError = getIn(errors, `songs.${index}.artist`) as string | undefined;
+                      const songNameTouched = touched.songs?.[index]?.songName;
+                      const artistTouched = touched.songs?.[index]?.artist;
+                      const showSongNameError = (songNameTouched && songNameError) || (submitCount > 0 && songNameError);
+                      const showArtistError = (artistTouched && artistError) || (submitCount > 0 && artistError);
+                      const hasSongError = showSongNameError || showArtistError;
 
-                            {/* Artist Field */}
-                            <div className="space-y-2">
-                              <label
-                                htmlFor={`songs.${index}.artist`}
-                                className="block text-sm font-medium"
-                              >
-                                Artist <span className="text-destructive">*</span>
-                              </label>
-                              <Field
-                                id={`songs.${index}.artist`}
-                                name={`songs.${index}.artist`}
-                                type="text"
-                                className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                placeholder="Enter artist name"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                  setFieldValue(`songs.${index}.artist`, e.target.value);
-                                  // Auto-save to Redux
-                                  const updatedSongs = [...values.songs];
-                                  updatedSongs[index] = { ...updatedSongs[index], artist: e.target.value };
-                                  dispatch(updateFavoriteSongs(updatedSongs));
-                                }}
-                              />
-                              {touched.songs?.[index]?.artist && errors.songs?.[index] && (
-                                <p className="text-sm text-destructive">
-                                  {typeof errors.songs[index] === 'object' && errors.songs[index] !== null && 'artist' in errors.songs[index]
-                                    ? (errors.songs[index] as { artist?: string }).artist
-                                    : typeof errors.songs[index] === 'string'
-                                    ? errors.songs[index]
-                                    : ''}
-                                </p>
-                              )}
+                      return (
+                        <div
+                          key={song.id}
+                          className={`p-4 border rounded-md bg-background space-y-4 ${
+                            hasSongError ? 'border-destructive' : 'border-border'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 space-y-4">
+                              {/* Song Name Field */}
+                              <div className="space-y-2">
+                                <label
+                                  htmlFor={`songs.${index}.songName`}
+                                  className="block text-sm font-medium"
+                                >
+                                  Song Name <span className="text-destructive">*</span>
+                                </label>
+                                <Field
+                                  id={`songs.${index}.songName`}
+                                  name={`songs.${index}.songName`}
+                                  type="text"
+                                  className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                                    showSongNameError ? 'border-destructive' : 'border-input'
+                                  }`}
+                                  placeholder="Enter song name"
+                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setFieldValue(`songs.${index}.songName`, e.target.value);
+                                    // Auto-save to Redux
+                                    const updatedSongs = [...values.songs];
+                                    updatedSongs[index] = { ...updatedSongs[index], songName: e.target.value };
+                                    dispatch(updateFavoriteSongs(updatedSongs));
+                                  }}
+                                />
+                                {showSongNameError && (
+                                  <p className="text-sm text-destructive">{songNameError}</p>
+                                )}
+                              </div>
+
+                              {/* Artist Field */}
+                              <div className="space-y-2">
+                                <label
+                                  htmlFor={`songs.${index}.artist`}
+                                  className="block text-sm font-medium"
+                                >
+                                  Artist <span className="text-destructive">*</span>
+                                </label>
+                                <Field
+                                  id={`songs.${index}.artist`}
+                                  name={`songs.${index}.artist`}
+                                  type="text"
+                                  className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                                    showArtistError ? 'border-destructive' : 'border-input'
+                                  }`}
+                                  placeholder="Enter artist name"
+                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setFieldValue(`songs.${index}.artist`, e.target.value);
+                                    // Auto-save to Redux
+                                    const updatedSongs = [...values.songs];
+                                    updatedSongs[index] = { ...updatedSongs[index], artist: e.target.value };
+                                    dispatch(updateFavoriteSongs(updatedSongs));
+                                  }}
+                                />
+                                {showArtistError && (
+                                  <p className="text-sm text-destructive">{artistError}</p>
+                                )}
+                              </div>
                             </div>
-                          </div>
 
                           {/* Remove Button */}
                           {values.songs.length > 1 && (
@@ -170,7 +173,8 @@ function FavoriteSongs() {
                           )}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
 
                     {/* Add Song Button */}
                     <button

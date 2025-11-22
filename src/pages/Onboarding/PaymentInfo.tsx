@@ -112,20 +112,20 @@ function PaymentInfo() {
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ values, errors, touched, isSubmitting, setFieldValue, handleBlur, submitForm }: FormikProps<PaymentInfoFormValues>) => {
+        {({ values, errors, touched, isSubmitting, submitCount, setFieldValue, handleBlur, submitForm }: FormikProps<PaymentInfoFormValues>) => {
           const isFormValid = 
             (values.cardNumber || '').replace(/\s/g, '').length === 16 &&
             values.expiry &&
             (values.cvv || '').length >= 3;
+          const showCardNumberError = (touched.cardNumber && errors.cardNumber) || (submitCount > 0 && errors.cardNumber);
+          const showExpiryError = (touched.expiry && errors.expiry) || (submitCount > 0 && errors.expiry);
+          const showCvvError = (touched.cvv && errors.cvv) || (submitCount > 0 && errors.cvv);
 
           return (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                const formErrors = validateForm(values);
-                if (Object.keys(formErrors).length === 0) {
-                  submitForm();
-                }
+                submitForm();
               }}
               className="space-y-6"
             >
@@ -139,7 +139,9 @@ function PaymentInfo() {
                     id="cardNumber"
                     name="cardNumber"
                     type="text"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      showCardNumberError ? 'border-destructive' : 'border-input'
+                    }`}
                     placeholder="1234 5678 9012 3456"
                     maxLength={19}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,7 +155,7 @@ function PaymentInfo() {
                       dispatch(updatePaymentInfo({ cardNumber: cardNumberDigits }));
                     }}
                   />
-                  {touched.cardNumber && errors.cardNumber && (
+                  {showCardNumberError && (
                     <p className="text-sm text-destructive">{errors.cardNumber}</p>
                   )}
                 </div>
@@ -169,7 +171,9 @@ function PaymentInfo() {
                       id="expiry"
                       name="expiry"
                       type="text"
-                      className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                        showExpiryError ? 'border-destructive' : 'border-input'
+                      }`}
                       placeholder="MM/YY"
                       maxLength={5}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +186,7 @@ function PaymentInfo() {
                         dispatch(updatePaymentInfo({ expiry: values.expiry }));
                       }}
                     />
-                    {touched.expiry && errors.expiry && (
+                    {showExpiryError && (
                       <p className="text-sm text-destructive">{errors.expiry}</p>
                     )}
                   </div>
@@ -196,7 +200,9 @@ function PaymentInfo() {
                       id="cvv"
                       name="cvv"
                       type="password"
-                      className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                        showCvvError ? 'border-destructive' : 'border-input'
+                      }`}
                       placeholder="123"
                       maxLength={4}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,7 +215,7 @@ function PaymentInfo() {
                         dispatch(updatePaymentInfo({ cvv: values.cvv }));
                       }}
                     />
-                    {touched.cvv && errors.cvv && (
+                    {showCvvError && (
                       <p className="text-sm text-destructive">{errors.cvv}</p>
                     )}
                   </div>
