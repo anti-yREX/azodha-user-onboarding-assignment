@@ -60,7 +60,7 @@ function FavoriteSongs() {
         <h2 className="text-2xl font-bold">Favorite Songs</h2>
         <p className="text-muted-foreground">Step 2: Add your favorite songs</p>
       </div>
-
+      
       <Formik
         initialValues={initialValues}
         validate={validateForm}
@@ -195,7 +195,7 @@ function FavoriteSongs() {
               >
                 Next
               </button>
-            </div>
+      </div>
           </form>
         )}
       </Formik>
