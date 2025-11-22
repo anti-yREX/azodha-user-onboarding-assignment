@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { login, selectIsAuthenticated, VALID_CREDENTIALS } from '@/store/authSlice';
 import { getFirstStepPath } from '@/config/routes';
+import { selectIsUserOnboardingDone } from '@/store/onboardingDataSlice';
 
 interface LoginFormValues {
   username: string;
@@ -13,12 +14,15 @@ interface LoginFormValues {
 function Login() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isOnboardingDone = useAppSelector(selectIsUserOnboardingDone);
   const navigate = useNavigate();
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate(`/onboarding/${getFirstStepPath()}`, { replace: true });
+    if (isAuthenticated && isOnboardingDone) {
+      navigate('/', { replace: true });
+    } else if (isAuthenticated) {
+      navigate(`/onboarding`, { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -49,7 +53,7 @@ function Login() {
     if (values.username === VALID_CREDENTIALS.username && values.password === VALID_CREDENTIALS.password) {
       dispatch(login({ username: values.username }));
       // Login successful - redirect will happen via useEffect when isAuthenticated changes
-      navigate(`/onboarding/${getFirstStepPath()}`, { replace: true });
+      navigate(`/onboarding}`, { replace: true });
       setSubmitting(false);
     } else {
       setFieldError('password', 'Invalid credentials. Please try again.');
