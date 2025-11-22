@@ -19,11 +19,18 @@ interface ProfileData {
   isDone: boolean;
 }
 
+interface PaymentInfoData {
+  cardNumber: string;
+  expiry: string;
+  cvv: string;
+  isDone: boolean;
+}
+
 interface OnboardingDataState {
   isDone: boolean;
   profile: ProfileData;
   favoriteSongs: FavoriteSongsData;
-  paymentInfo: Record<string, unknown>;
+  paymentInfo: PaymentInfoData;
 }
 
 const initialState: OnboardingDataState = {
@@ -39,7 +46,12 @@ const initialState: OnboardingDataState = {
     songs: [],
     isDone: false,
   },
-  paymentInfo: {},
+  paymentInfo: {
+    cardNumber: '',
+    expiry: '',
+    cvv: '',
+    isDone: false,
+  },
 };
 
 const onboardingDataSlice = createSlice({
@@ -61,8 +73,11 @@ const onboardingDataSlice = createSlice({
     setFavoriteSongsDone: (state, action: PayloadAction<boolean>) => {
       state.favoriteSongs.isDone = action.payload;
     },
-    updatePaymentInfo: (state, action: PayloadAction<Record<string, unknown>>) => {
-      state.paymentInfo = action.payload;
+    updatePaymentInfo: (state, action: PayloadAction<Partial<PaymentInfoData>>) => {
+      state.paymentInfo = { ...state.paymentInfo, ...action.payload };
+    },
+    setPaymentInfoDone: (state, action: PayloadAction<boolean>) => {
+      state.paymentInfo.isDone = action.payload;
     },
   },
 });
@@ -74,6 +89,7 @@ export const {
   updateFavoriteSongs,
   setFavoriteSongsDone,
   updatePaymentInfo,
+  setPaymentInfoDone,
 } = onboardingDataSlice.actions;
 export default onboardingDataSlice.reducer;
 
@@ -90,4 +106,6 @@ export const selectFavoriteSongsIsDone = (state: { onboardingData: OnboardingDat
   state.onboardingData.favoriteSongs.isDone;
 export const selectPaymentInfo = (state: { onboardingData: OnboardingDataState }) =>
   state.onboardingData.paymentInfo;
+export const selectPaymentInfoIsDone = (state: { onboardingData: OnboardingDataState }) =>
+  state.onboardingData.paymentInfo.isDone;
 

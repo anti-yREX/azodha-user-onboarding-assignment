@@ -59,7 +59,12 @@ export const store = configureStore({
         songs: [],
         isDone: false,
       },
-      paymentInfo: {},
+      paymentInfo: {
+        cardNumber: '',
+        expiry: '',
+        cvv: '',
+        isDone: false,
+      },
     },
   },
 });
