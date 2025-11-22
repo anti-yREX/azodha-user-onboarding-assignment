@@ -206,7 +206,12 @@ function FavoriteSongs() {
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || values.songs.length === 0}
+                disabled={
+                  isSubmitting ||
+                  values.songs.length === 0 ||
+                  !values.songs[0]?.songName?.trim() ||
+                  !values.songs[0]?.artist?.trim()
+                }
                 className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:shadow-md active:scale-[0.98] border-4 border-white"
               >
                 Next
