@@ -54,6 +54,10 @@ function FavoriteSongs() {
     navigate('/onboarding/payment-info');
   };
 
+  const handleBack = () => {
+    navigate('/onboarding/profile');
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -187,8 +191,15 @@ function FavoriteSongs() {
               </FieldArray>
             </div>
 
-            {/* Next Button */}
-            <div className="flex justify-end">
+            {/* Back and Next Buttons */}
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-medium shadow-sm hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 transform hover:shadow-md active:scale-[0.98] border-4"
+              >
+                Back
+              </button>
               <button
                 type="submit"
                 disabled={isSubmitting || values.songs.length === 0}
