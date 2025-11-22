@@ -16,6 +16,7 @@ function Home() {
             You have successfully completed your onboarding.
           </p>
         </div>
+        <div className="mt-24"/>
         <div className="flex justify-center">
           <button
             onClick={handleEditProfile}
