@@ -38,12 +38,18 @@ Azodha asked for a React + TypeScript + Redux implementation of a multi-step use
 
 ```
 src/
-  components/   # shared visual building blocks
-  pages/        # top-level route views
-  types/        # shared domain types & interfaces
+  assets/              # static assets (images, icons, etc.)
+  components/          # shared visual building blocks
+    Onboarding/        # onboarding-specific components (Stepper, etc.)
+    routes/            # route guards and protection components
+    ui/                # reusable UI components
+  config/              # configuration files (routes, constants, etc.)
+  lib/                 # utility functions and helpers
+  pages/               # top-level route views
+    Onboarding/        # onboarding step pages (Profile, FavoriteSongs, PaymentInfo, Success)
+  store/               # Redux store configuration and slices
+  types/               # shared domain types & interfaces
 ```
-
-Additional folders (Redux store, utilities, etc.) will be added as the onboarding flow is implemented.
 
 ## Getting Started
 
