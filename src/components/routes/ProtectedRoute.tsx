@@ -2,8 +2,10 @@ import { type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated } from '@/store/authSlice';
-import { selectIsUserOnboardingDone } from '@/store/onboardingDataSlice';
-import { getFirstStepPath } from '@/config/routes';
+import {
+  selectIsUserOnboardingDone,
+  selectFirstIncompleteStepPath,
+} from '@/store/onboardingDataSlice';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -23,6 +25,7 @@ interface ProtectedRouteProps {
 function ProtectedRoute({ children }: ProtectedRouteProps) {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isUserOnboardingDone = useAppSelector(selectIsUserOnboardingDone);
+  const firstIncompleteStepPath = useAppSelector(selectFirstIncompleteStepPath);
   const location = useLocation();
   const isOnboardingRoute = location.pathname.startsWith('/onboarding');
   
@@ -35,8 +38,8 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (isOnboardingRoute) {
       return <>{children}</>;
     }
-    // Redirect to onboarding if not already on an onboarding route
-    return <Navigate to={`/onboarding/${getFirstStepPath()}`} replace />;
+    // Redirect to first incomplete onboarding step if not already on an onboarding route
+    return <Navigate to={`/onboarding/${firstIncompleteStepPath}`} replace />;
   }
   
   return <>{children}</>;

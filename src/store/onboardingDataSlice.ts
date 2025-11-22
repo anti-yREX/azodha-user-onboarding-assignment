@@ -109,3 +109,23 @@ export const selectPaymentInfo = (state: { onboardingData: OnboardingDataState }
 export const selectPaymentInfoIsDone = (state: { onboardingData: OnboardingDataState }) =>
   state.onboardingData.paymentInfo.isDone;
 
+/**
+ * Get the path of the first incomplete onboarding step
+ * Checks steps in order: profile → favorite-songs → payment-info → success
+ */
+export const selectFirstIncompleteStepPath = (state: { onboardingData: OnboardingDataState }): string => {
+  const { profile, favoriteSongs, paymentInfo } = state.onboardingData;
+  
+  if (!profile.isDone) {
+    return 'profile';
+  }
+  if (!favoriteSongs.isDone) {
+    return 'favorite-songs';
+  }
+  if (!paymentInfo.isDone) {
+    return 'payment-info';
+  }
+  // If all steps are done, return success (or could return profile as fallback)
+  return 'success';
+};
+

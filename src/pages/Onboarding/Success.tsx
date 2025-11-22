@@ -1,14 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '@/store/hooks';
-import { setOnboardingDone } from '@/store/onboardingDataSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  setOnboardingDone,
+  selectProfileIsDone,
+  selectFavoriteSongsIsDone,
+  selectPaymentInfoIsDone,
+} from '@/store/onboardingDataSlice';
 
 function Success() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const profileIsDone = useAppSelector(selectProfileIsDone);
+  const favoriteSongsIsDone = useAppSelector(selectFavoriteSongsIsDone);
+  const paymentInfoIsDone = useAppSelector(selectPaymentInfoIsDone);
 
   const handleGetStarted = () => {
-    dispatch(setOnboardingDone(true));
-    navigate('/');
+    // Only set onboarding as done if all three steps are completed
+    if (profileIsDone && favoriteSongsIsDone && paymentInfoIsDone) {
+      dispatch(setOnboardingDone(true));
+      navigate('/');
+    }
   };
 
   return (

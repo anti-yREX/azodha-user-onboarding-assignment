@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppSelector } from '@/store/hooks';
+import { selectFirstIncompleteStepPath } from '@/store/onboardingDataSlice';
 import ProtectedRoute from '@/components/routes/ProtectedRoute';
 import StepGuard from '@/components/routes/StepGuard';
 import Home from '@/pages/Home';
@@ -8,7 +10,14 @@ import Profile from '@/pages/Onboarding/Profile';
 import FavoriteSongs from '@/pages/Onboarding/FavoriteSongs';
 import PaymentInfo from '@/pages/Onboarding/PaymentInfo';
 import Success from '@/pages/Onboarding/Success';
-import { getFirstStepPath } from '@/config/routes';
+
+/**
+ * Component that redirects to the first incomplete onboarding step
+ */
+function OnboardingRedirect() {
+  const firstIncompleteStepPath = useAppSelector(selectFirstIncompleteStepPath);
+  return <Navigate to={`/onboarding/${firstIncompleteStepPath}`} replace />;
+}
 
 function App() {
   return (
@@ -33,10 +42,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* Redirect to first step when accessing /onboarding */}
+          {/* Redirect to first incomplete step when accessing /onboarding */}
           <Route
             index
-            element={<Navigate to={`/onboarding/${getFirstStepPath()}`} replace />}
+            element={<OnboardingRedirect />}
           />
 
           {/* Profile step */}
@@ -78,7 +87,7 @@ function App() {
               </StepGuard>
             }
           />
-          <Route path="*" element={<Navigate to={`/onboarding/${getFirstStepPath()}`} replace />} />
+          <Route path="*" element={<OnboardingRedirect />} />
         </Route>
         {/* Login page */}
         <Route path="/login" element={<Login />} />
